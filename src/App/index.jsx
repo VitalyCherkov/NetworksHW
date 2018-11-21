@@ -26,10 +26,14 @@ const ColWrapper = styled(Col)`
     padding: 10px;
 `;
 
+const ReportContainer = styled.div`
+    
+`;
+
 export default class App extends React.Component {
     state = {
-        sourceValue: '',
-        generatorLen: '',
+        sourceValue: '11111010011',
+        generatorLen: '4',
         encryptedLine: '',
         decryptedLine: '',
         report: {},
@@ -108,6 +112,7 @@ export default class App extends React.Component {
                         <ColWrapper span={8}>Распознано</ColWrapper>
                         <ColWrapper span={8}>Не распознано</ColWrapper>
                     </div>
+                    <div>
                     {
                         Object.keys(report).map((diffsCount, index) => (
                             <React.Fragment key={ index }>
@@ -120,6 +125,7 @@ export default class App extends React.Component {
                             </React.Fragment>
                         ))
                     }
+                    </div>
                 </ContentWrapper>
             </RootWrapper>
         )

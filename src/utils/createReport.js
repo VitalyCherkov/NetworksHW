@@ -23,18 +23,19 @@ export default (encryptedLine, generatorLen) => {
         const res = {};
         for (let i = 0; i < maxVal; i++) {
             // debugger;
-            const number = i.toString(2);
+            let number = i.toString(2);
             const lenDiff = encryptedLine.length - number.length;
-            const diffsCount = getDiffsCount(number + getNullsLine(lenDiff), encryptedLine);
+            number = getNullsLine(lenDiff) + number;
+            const diffsCount = getDiffsCount(number, encryptedLine);
+            if (diffsCount > 1) {
+                continue;
+            }
             const decrypted = decrypt(number, generatorLen);
             if (!res[diffsCount]) {
                 res[diffsCount] = {
                     success: 0,
                     error: 0,
                 };
-            }
-            if (diffsCount === 1) {
-                console.log('log:', number + getNullsLine(lenDiff), "decrypted: ", decrypted, "source: ", encryptedLine);
             }
             if (decrypted !== encryptedLine) {
                 res[diffsCount].error++;

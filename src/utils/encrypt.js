@@ -9,7 +9,6 @@ export default (inputCode, generatorLen) => {
         return inputCode + getNullsLine(generatorLen - result.length) + result;
     }
     catch (e) {
-        console.log(e);
         return 'error';
     }
 }

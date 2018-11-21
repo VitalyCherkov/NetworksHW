@@ -1,5 +1,5 @@
 import divide from './xorDivide';
-import generatorPolinoms from '../config/generatingPolinoms';
+import generatorPolinoms, { syndroms } from '../config/generatingPolinoms';
 import getNullsLine from './getNullsLine';
 
 const inverseBits = (inversing, mask) => {
@@ -18,10 +18,24 @@ const inverseBits = (inversing, mask) => {
 export default (encryptedLine, generatorLen) => {
     try {
         const divider = generatorPolinoms[generatorLen];
-        const remainder = divide(encryptedLine, divider);
+        let remainder = divide(encryptedLine, divider);
 
         if (remainder === '') {
             return encryptedLine;
+        }
+
+        remainder = parseInt(remainder, 2);
+        if (isNaN(remainder)) {
+            return 'REMAINDER_IS_NAN';
+        }
+        if (syndroms[generatorLen]) {
+            const syndrom = syndroms[generatorLen][remainder];
+            if (syndrom === undefined) {
+                return 'SYNDROM_DOES_NOT_EXIST';
+            }
+            const nulls_count = encryptedLine.length - 1 - syndroms[generatorLen][remainder];
+            const errVec = getNullsLine(nulls_count) + '1';
+            return inverseBits(encryptedLine, errVec);
         }
 
         let mask = getNullsLine(encryptedLine.length - 1) + '1';
@@ -36,7 +50,7 @@ export default (encryptedLine, generatorLen) => {
         }
     }
     catch (e) {
-        return 'NOT_DECRYPTED';
+        return 'NOT_DECRYPTED_UNEXPECTED_ERROR';
     }
     return 'NOT_DECRYPTED';
 }

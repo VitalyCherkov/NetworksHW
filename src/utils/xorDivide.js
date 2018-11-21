@@ -4,7 +4,6 @@ export default (dividend, divider) => {
     let line1 = dividend;
     let line2 = divider;
     while(line1.length >= line2.length) {
-        console.log(line1, line2);
         let resStr = '';
         for (let i = 0; i < line1.length; i++) {
             if (i < line2.length) {
@@ -19,7 +18,7 @@ export default (dividend, divider) => {
             line1 = '';
         }
         else {
-            line1 = resStr.slice(notNullIndex);
+            line1 = resStr.slice(notNullIndex) || '';
         }
     }
     return line1;
