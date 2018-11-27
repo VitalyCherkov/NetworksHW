@@ -1,5 +1,7 @@
 import getNullsLine from './getNullsLine';
 import decrypt from './decrypt';
+import xorDivide from './xorDivide';
+import generatorPolinoms from '../config/generatingPolinoms';
 
 const getDiffsCount = (line1, line2) => {
     let ans = 0;
@@ -26,16 +28,22 @@ export default (encryptedLine, generatorLen) => {
             let number = i.toString(2);
             const lenDiff = encryptedLine.length - number.length;
             number = getNullsLine(lenDiff) + number;
-            const diffsCount = getDiffsCount(number, encryptedLine);
-            if (diffsCount > 1) {
-                continue;
-            }
+            let F = { found: false };
+            const diffsCount = getDiffsCount(number, encryptedLine, F);
             const decrypted = decrypt(number, generatorLen);
             if (!res[diffsCount]) {
                 res[diffsCount] = {
                     success: 0,
                     error: 0,
+                    found: 0,
+                    notFound: 0,
                 };
+            }
+            if (xorDivide(number, generatorPolinoms[generatorLen])) {
+                res[diffsCount].found++;
+            }
+            else {
+                res[diffsCount].notFound++;
             }
             if (decrypted !== encryptedLine) {
                 res[diffsCount].error++;

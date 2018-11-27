@@ -18,7 +18,7 @@ const RootWrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-    width: 700px; 
+    width: 1000px; 
     height: 100vh;  
 `;
 
@@ -39,14 +39,23 @@ export default class App extends React.Component {
         report: {},
     };
 
+    recalc = () => {
+        const { sourceValue, generatorLen } = this.state;
+        const encrypted = encrypt(sourceValue, parseInt(generatorLen, 10));
+        this.setState({
+            encryptedLine: encrypted,
+            decryptedLine: decrypt(encrypted, parseInt(generatorLen, 10)),
+        });
+    };
+
+    componentDidMount() {
+        this.recalc();
+    }
+
     componentDidUpdate(prevProps, prevState) {
         const { sourceValue, generatorLen } = this.state;
         if (prevState.sourceValue !== sourceValue || prevState.generatorLen !== generatorLen) {
-            const encrypted = encrypt(sourceValue, parseInt(generatorLen, 10));
-            this.setState({
-                encryptedLine: encrypted,
-                decryptedLine: decrypt(encrypted, parseInt(generatorLen, 10)),
-            });
+            this.recalc();
         }
     }
 
@@ -80,6 +89,16 @@ export default class App extends React.Component {
             <RootWrapper>
                 <ContentWrapper>
                     <div>
+                        <ColWrapper span={ 3 }>Выполнил</ColWrapper>
+                        <ColWrapper span={ 21 }>
+                            Студент группы ИУ5-52
+                            <br/>
+                            <strong>Черков Виталий</strong>
+                            <br/>
+                            Вариант 22
+                        </ColWrapper>
+                    </div>
+                    <div>
                         <ColWrapper span={ 10 }>
                             <Input
                                 placeholder='Кодируемая строка'
@@ -108,22 +127,36 @@ export default class App extends React.Component {
                     </h1>
                     <Divider/>
                     <div>
-                        <ColWrapper span={8}>Количество отличий</ColWrapper>
-                        <ColWrapper span={8}>Распознано</ColWrapper>
-                        <ColWrapper span={8}>Не распознано</ColWrapper>
+                        <ColWrapper span={3}>Кратность</ColWrapper>
+                        <ColWrapper span={5}>Кол-во данной кратности</ColWrapper>
+                        <ColWrapper span={4}>Обнаружено</ColWrapper>
+                        <ColWrapper span={4}>Исправлено</ColWrapper>
+                        <ColWrapper span={4}>Обнаруж. спос-ть</ColWrapper>
+                        <ColWrapper span={4}>Корр. спос-ть</ColWrapper>
                     </div>
                     <div>
                     {
-                        Object.keys(report).map((diffsCount, index) => (
-                            <React.Fragment key={ index }>
-                                <div>
-                                    <ColWrapper span={8}>{ diffsCount }</ColWrapper>
-                                    <ColWrapper span={8}>{ report[diffsCount].success }</ColWrapper>
-                                    <ColWrapper span={8}>{ report[diffsCount].error }</ColWrapper>
-                                </div>
-                                <Divider/>
-                            </React.Fragment>
-                        ))
+                        Object.keys(report).map((diffsCount, index) => {
+                            const sum = report[diffsCount].notFound + report[diffsCount].found;
+                            let foundAbility = report[diffsCount].found / sum;
+                            foundAbility = Math.round(foundAbility * 10000) / 10000;
+                            let fixAbility = report[diffsCount].success / sum;
+                            fixAbility = Math.round(fixAbility * 10000) / 10000;
+                            return sum !== 1 ? (
+                                <React.Fragment key={ index }>
+                                    <div>
+                                        <ColWrapper span={3}>{ diffsCount }</ColWrapper>
+                                        <ColWrapper span={5}>{ sum }</ColWrapper>
+                                        <ColWrapper span={4}>{ report[diffsCount].found }</ColWrapper>
+                                        <ColWrapper span={4}>{ report[diffsCount].success }</ColWrapper>
+                                        <ColWrapper span={4}>{ foundAbility }</ColWrapper>
+                                        <ColWrapper span={4}>{ fixAbility }</ColWrapper>
+                                    </div>
+                                    <Divider/>
+                                </React.Fragment>
+                            ) : undefined;
+                        }
+                        )
                     }
                     </div>
                 </ContentWrapper>
