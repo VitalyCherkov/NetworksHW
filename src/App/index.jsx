@@ -119,12 +119,9 @@ export default class App extends React.Component {
                                 onClick={ this.handleCreateReport }>Подготовить отчет</Button>
                         </ColWrapper>
                     </div>
-                    <h1>
+                    <h2>
                         <span>Encrypted: </span>{ encryptedLine }
-                    </h1>
-                    <h1>
-                        <span>Decrypted: </span>{ decryptedLine }
-                    </h1>
+                    </h2>
                     <Divider/>
                     <div>
                         <ColWrapper span={3}>Кратность</ColWrapper>
